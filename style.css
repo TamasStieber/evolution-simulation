@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  display: flex;
+  max-height: 100vh;
+}
+
+#main-canvas {
+  background-color: rgb(213, 212, 221);
+}
+
+#controls {
+  width: 100%;
+  overflow-y: scroll;
+}
+
+p {
+  margin: 0;
+}

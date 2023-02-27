@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolution Simulation</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="utils.js" defer></script>
+    <script src="network.js" defer></script>
+    <script src="sensor.js" defer></script>
+    <script src="controls.js" defer></script>
+    <script src="entity.js" defer></script>
+    <script src="world.js" defer></script>
+    <script src="main.js" defer></script>
+</head>
+<body>
+    <canvas id="main-canvas"></canvas>
+    <div id="controls">
+        <button onclick="select()">Select</button>
+        <br>
+        <button onclick="reset()">New World</button>
+        <br>
+        <label for="world-size">World Size:</label>
+        <input type="number" name="world-size" id="world-size" value="128">
+        <br>
+        <label for="population-size">Population Size:</label>
+        <input type="number" name="population-size" id="population-size" value="300">
+        <br>
+        <label for="mutation">Mutation?</label>
+        <input type="checkbox" name="mutation" id="mutation">
+        <br>
+        <label for="entity-mutation-chance">Chance of mutation for one entity in the population (%):</label>
+        <input type="number" name="entity-mutation-chance" id="entity-mutation-chance" value="10" min="0" max="100">
+        <br>
+        <label for="random-genes">Random gene mutation (as opposite of every gene mutation)?</label>
+        <input type="checkbox" name="random-genes" id="random-genes">
+        <br>
+        <label for="gene-mutation-chance">Chance of mutation for one gene of an entity (%):</label>
+        <input type="number" name="gene-mutation-chance" id="gene-mutation-chance" value="10" min="0" max="100">
+        <br>
+        <label for="gene-mutation-amount">Amount of mutation for one gene of an entity (%):</label>
+        <input type="number" name="gene-mutation-amount" id="gene-mutation-amount" value="10" min="0" max="100">
+        <br>
+        <div id="generations">Current Generation: 0</div>
+        <div id="generations-history"></div>
+    </div>
+</body>
+</html>
