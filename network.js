@@ -4,6 +4,51 @@ class NeuralNetwork {
     for (let i = 0; i < neuronCounts.length - 1; i++) {
       this.levels.push(new Level(neuronCounts[i], neuronCounts[i + 1]));
     }
+
+    this.colorRepresentation = 'FFFFFF';
+
+    // const R = Math.floor(Math.random() * 256).toString(16);
+    // const G = Math.floor(Math.random() * 256).toString(16);
+    // const B = Math.floor(Math.random() * 256).toString(16);
+
+    this.colorRepresentation = NeuralNetwork.getNumericRepresentation(this);
+  }
+
+  static getNumericRepresentation(network) {
+    let sum = 0;
+    let count = 0;
+
+    network.levels.forEach((level) => {
+      for (let i = 0; i < level.thresholds.length; i++) {
+        sum += (level.thresholds[i] + 1) / 2;
+        count++;
+      }
+      for (let i = 0; i < level.weights.length; i++) {
+        for (let j = 0; j < level.weights[i].length; j++) {
+          sum += (level.weights[i][j] + 1) / 2;
+          count++;
+        }
+      }
+    });
+
+    // return sum;
+
+    const sumInDec = Math.floor((sum / count) * 16777216);
+    const sumInBin = decToBin(sumInDec);
+
+    const R = getRGBFromBin(sumInBin).R;
+    const G = getRGBFromBin(sumInBin).G;
+    const B = getRGBFromBin(sumInBin).B;
+
+    return R + G + B;
+  }
+
+  setColorRepresentation(numericRepresentation) {
+    const sumInBin = decToBin(Math.floor(numericRepresentation * 16777215));
+    const R = getRGBFromBin(sumInBin).R;
+    const G = getRGBFromBin(sumInBin).G;
+    const B = getRGBFromBin(sumInBin).B;
+    this.colorRepresentation = R + G + B;
   }
 
   static feedForward(givenInputs, network) {
@@ -18,6 +63,10 @@ class NeuralNetwork {
     const newNeuralNetwork = entity1.neuralNetwork;
     for (let i = 0; i < newNeuralNetwork.levels.length; i++) {
       for (let j = 0; j < newNeuralNetwork.levels[i].thresholds.length; j++) {
+        // console.log(
+        //   newNeuralNetwork.levels[i].thresholds[j] ===
+        //     entity2.neuralNetwork.levels[i].thresholds[j]
+        // );
         if (Math.random() > 0.5) {
           newNeuralNetwork.levels[i].thresholds[j] =
             entity2.neuralNetwork.levels[i].thresholds[j];
@@ -32,6 +81,14 @@ class NeuralNetwork {
         }
       }
     }
+
+    const entity1Color = entity1.neuralNetwork.colorRepresentation;
+    const entity2Color = entity2.neuralNetwork.colorRepresentation;
+
+    const newColor = mixColors(entity1Color, entity2Color);
+
+    newNeuralNetwork.colorRepresentation = newColor;
+
     return newNeuralNetwork;
   }
 

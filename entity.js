@@ -9,7 +9,7 @@ class Entity {
     this.sensor = new Sensor(this);
 
     if (!neuralNetwork) {
-      this.neuralNetwork = new NeuralNetwork([this.sensor.rayCount, 5, 4]);
+      this.neuralNetwork = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
     } else {
       this.neuralNetwork = neuralNetwork;
     }
@@ -17,8 +17,13 @@ class Entity {
     this.controls = new Controls(controlType);
   }
 
-  reproduce(partner) {
-    return NeuralNetwork.crossover(this, partner);
+  reproduce(partner = false) {
+    const newNeuralNetwork = NeuralNetwork.crossover(this, partner);
+    newNeuralNetwork.colorRepresentation =
+      NeuralNetwork.getNumericRepresentation(newNeuralNetwork);
+    return newNeuralNetwork;
+
+    // return this.neuralNetwork;
   }
 
   update() {
@@ -71,7 +76,19 @@ class Entity {
       0,
       Math.PI * 2
     );
-    ctx.fillStyle = 'green';
+    ctx.fillStyle = '#' + this.neuralNetwork.colorRepresentation;
     ctx.fill();
+
+    ctx.beginPath();
+    ctx.lineWidth = 0.5;
+    ctx.arc(
+      this.world.getWorldXCoordinate(this.x),
+      this.world.getWorldYCoordinate(this.y),
+      cellSize,
+      0,
+      Math.PI * 2
+    );
+    ctx.strokeStyle = 'black';
+    ctx.stroke();
   }
 }

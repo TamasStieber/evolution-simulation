@@ -2,7 +2,7 @@ class Sensor {
   constructor(entity) {
     this.entity = entity;
     this.world = this.entity.world;
-    this.rayCount = 4;
+    this.rayCount = 8;
     this.rayLength = this.world.width;
     this.raySpread = Math.PI * 2;
 

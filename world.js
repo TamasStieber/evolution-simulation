@@ -61,6 +61,33 @@ class World {
     return Math.floor(Math.random() * this.cells + 1);
   }
 
+  colorEntities(population) {
+    let min = NeuralNetwork.getNumericRepresentation(
+      population[0].neuralNetwork
+    );
+    let max = min;
+
+    for (let i = 1; i < population.length; i++) {
+      const numericRepresentation = NeuralNetwork.getNumericRepresentation(
+        population[i].neuralNetwork
+      );
+      if (numericRepresentation < min) {
+        min = numericRepresentation;
+      } else if (numericRepresentation > max) {
+        max = numericRepresentation;
+      }
+    }
+
+    this.population.forEach((entity) => {
+      const numericRepresentation = lerpForT(
+        min,
+        max,
+        NeuralNetwork.getNumericRepresentation(entity.neuralNetwork)
+      );
+      entity.neuralNetwork.setColorRepresentation(numericRepresentation);
+    });
+  }
+
   populate(populationSize) {
     this.population = [];
     for (let i = 0; i < populationSize; i++) {
@@ -82,24 +109,30 @@ class World {
         }
       }
     }
+
+    // this.colorEntities(this.population);
+
+    document.getElementById('generations').innerHTML = 'Current Generation: 0';
     document.getElementById('generations-history').innerHTML = '';
   }
 
   selection() {
     const survivors = [];
-    world.population.forEach((entity) => {
-      if (entity.x >= world.cells * 0.75) {
+    this.population.forEach((entity) => {
+      if (entity.x >= this.cells * 0.75) {
         survivors.push(entity);
       }
 
       // if (
-      //   (entity.x >= 1 && entity.x <= world.cells * 0.25) ||
-      //   (entity.x >= world.cells * 0.75 && entity.x <= world.cells)
+      //   (entity.x >= 1 && entity.x <= world.cells * 0.1) ||
+      //   (entity.x >= world.cells * 0.9 && entity.x <= world.cells)
       // ) {
       //   survivors.push(entity);
       // }
     });
-    this.#repopulateWithSurvivorsChildren(survivors);
+    if (survivors.length > 1) {
+      this.#repopulateWithSurvivorsChildren(survivors);
+    }
   }
 
   #repopulateWithSurvivorsChildren(survivors) {
@@ -110,7 +143,7 @@ class World {
     this.population = [];
 
     while (this.population.length < populationSize) {
-      for (let i = 0; i < survivors.length - 1; i += 2) {
+      for (let i = 0; i < survivors.length; i++) {
         while (true) {
           const randomXCoordinate = this.#getRandomCoordinate();
           const randomYCoordinate = this.#getRandomCoordinate();
@@ -121,15 +154,21 @@ class World {
           );
 
           if (!found) {
+            let randomPartner = 0;
+            while (true) {
+              randomPartner = Math.floor(Math.random() * survivors.length);
+              if (randomPartner !== i) break;
+            }
             this.population.push(
               new Entity(
                 this,
                 randomXCoordinate,
                 randomYCoordinate,
                 'AI',
-                survivors[i].reproduce(survivors[i + 1])
+                survivors[i].reproduce(survivors[randomPartner])
               )
             );
+            // console.log(`${i} matched with ${randomPartner}`);
 
             break;
           }
@@ -138,11 +177,36 @@ class World {
       }
     }
 
-    // this.populate(populationSize);
-    // const bestBrain = survivors[0].neuralNetwork;
-    // this.population.forEach((entity) => {
-    //   entity.neuralNetwork = bestBrain;
-    // });
+    // this.colorEntities(this.population);
+
+    // while (this.population.length < populationSize) {
+    //   for (let i = 0; i < survivors.length; i++) {
+    //     while (true) {
+    //       const randomXCoordinate = this.#getRandomCoordinate();
+    //       const randomYCoordinate = this.#getRandomCoordinate();
+
+    //       const found = this.population.find(
+    //         (element) =>
+    //           element.x === randomXCoordinate && element.y === randomYCoordinate
+    //       );
+
+    //       if (!found) {
+    //         this.population.push(
+    //           new Entity(
+    //             this,
+    //             randomXCoordinate,
+    //             randomYCoordinate,
+    //             'AI',
+    //             survivors[i].reproduce()
+    //           )
+    //         );
+
+    //         break;
+    //       }
+    //     }
+    //     if (this.population.length === populationSize) break;
+    //   }
+    // }
 
     if (document.getElementById('mutation').checked) {
       const mutationChanceForEntity =
